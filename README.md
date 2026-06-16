@@ -65,38 +65,6 @@ View counts of:
 - Tailwind CSS
 - Lucide React
 
-### Development Tools
-- Vite
-- ESLint
-- Prettier
-
----
-
-## Project Structure
-
-```text
-src/
-│
-├── components/
-│   ├── ReviewTable.tsx
-│   └── SummaryBar.tsx
-│
-├── routes/
-│   ├── __root.tsx
-│   ├── index.tsx
-│   └── api/
-│       └── classify.ts
-│
-├── lib/
-│   └── review-types.ts
-│
-├── styles.css
-├── router.tsx
-├── start.ts
-└── server.ts
-```
-
----
 
 ## How It Works
 

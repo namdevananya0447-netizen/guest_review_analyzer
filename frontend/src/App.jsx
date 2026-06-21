@@ -1,3 +1,4 @@
+// Week 3: UI component library and dark mode integrated
 import { useState, useCallback, useMemo } from 'react';
 import { Download, Trash2, Leaf, RefreshCw, Layers, Sparkles } from 'lucide-react';
 import SummaryBar from './components/SummaryBar';

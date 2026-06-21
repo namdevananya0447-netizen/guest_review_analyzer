@@ -1,8 +1,8 @@
-// Week 3: UI component library and dark mode integrated
 import { useState, useCallback, useMemo } from 'react';
 import { Download, Trash2, Leaf, RefreshCw, Layers, Sparkles } from 'lucide-react';
 import SummaryBar from './components/SummaryBar';
 import ReviewTable from './components/ReviewTable';
+import DarkModeToggle from './components/ui/DarkModeToggle';
 
 const DEFAULT_PLACEHOLDER = `The food was absolutely delicious! Fresh organic ingredients from their garden. The host was very warm.
 
@@ -183,12 +183,13 @@ export default function App() {
             </div>
           </div>
 
-          {/* Right Header Tagline */}
-          <div className="text-right hidden sm:block">
-            <span className="text-xs text-eco-muted font-medium tracking-wider bg-eco-bg/80 border border-eco-border px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 shadow-xs">
+          {/* Right Header: Tagline + Dark Mode Toggle */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-eco-muted font-medium tracking-wider bg-eco-bg/80 border border-eco-border px-3 py-1.5 rounded-full hidden sm:inline-flex items-center gap-1.5 shadow-xs">
               <Sparkles className="w-3.5 h-3.5 text-eco-primary" />
               Review Intelligence · Powered by AI
             </span>
+            <DarkModeToggle />
           </div>
         </div>
       </header>

@@ -39,7 +39,6 @@ async def classify_reviews(review:Reviews):
     Do not return any text other than the raw JSON."""
     response = await client.chat.completions.create(
     model="llama-3.3-70b-versatile",
-    #From the object named review, get the value stored in its review attribute.
     messages=[{"role":"system","content":system_prompt},{"role":"user","content":review.review}],
     response_format={"type": "json_object"}
     )
@@ -103,12 +102,3 @@ def update(id:UUID,updated: updated_review):
         raise HTTPException(status_code=404, detail="not found")
 
     return response.data
-        
-
-
-
-    
-
-
-
-

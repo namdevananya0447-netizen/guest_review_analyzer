@@ -251,29 +251,7 @@ http://localhost:5173
 - Persistent database storage
 
 ---
-## Database
 
-**Choice:** PostgreSQL via Supabase  
-**Why:** Data is structured with clear fields (review, sentiment, theme, response) making a relational database the best fit.
-
-## Schema Diagram
-![Schema Diagram](W5_SchemaDiagram_TBI-2610078.png)
-
-## Set Up Database
-1. Go to supabase.com and create a free project
-2. Create a table called `review_analyzer` with these columns:
-   - id (uuid, primary key)
-   - review (text)
-   - sentiment (text)
-   - theme (text)
-   - suggested_response (text)
-   - created_at (timestamp)
-3. Go to Project Settings → API → copy Project URL and Secret Key
-4. Add to your `.env` file:
-```
-SUPABASE_URL=your_project_url
-SUPABASE_KEY=your_secret_key
-```
 ## 👩‍💻 Author
 
 **Ananya Namdev**

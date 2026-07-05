@@ -251,29 +251,40 @@ http://localhost:5173
 - Persistent database storage
 
 ---
-## Database
+## Week 5 — Database Integration
 
-**Choice:** PostgreSQL via Supabase  
-**Why:** Data is structured with clear fields (review, sentiment, theme, response) making a relational database the best fit.
+### Database Choice: Supabase (PostgreSQL)
 
-## Schema Diagram
-![Schema Diagram](W5_SchemaDiagram_TBI-2610078.png)
+We chose PostgreSQL via Supabase because our data is structured and relational by nature — every guest review has a fixed set of fields (review text, sentiment, theme, suggested response, timestamp) with no need for flexible or nested schemas. Supabase provides a free, managed PostgreSQL instance with a simple Python client SDK and no server setup required, making it a good fit for this structured, single-table use case.
 
-## Set Up Database
-1. Go to supabase.com and create a free project
-2. Create a table called `review_analyzer` with these columns:
-   - id (uuid, primary key)
-   - review (text)
-   - sentiment (text)
-   - theme (text)
-   - suggested_response (text)
-   - created_at (timestamp)
-3. Go to Project Settings → API → copy Project URL and Secret Key
-4. Add to your `.env` file:
-```
+### Database Schema
+
+![Schema Diagram](./W5_SchemaDiagram_TBI-2610078.png)
+
+**Table: `review_analyzer`**
+
+| Column | Type | Description |
+|---|---|---|
+| id | uuid | Primary key, auto-generated |
+| review | text | The original guest review text |
+| sentiment | text | Positive / Neutral / Negative |
+| theme | text | Food / Host / Location / Cleanliness / Value / Experience |
+| suggested_response | text | AI-generated management reply |
+| created_at | timestamp | Auto-set on row creation |
+
+### Set Up the Database
+
+1. Create a free project at [supabase.com](https://supabase.com)
+2. Go to **Project Settings → API** and copy your **Project URL** and **anon/public key**
+3. In the Supabase Table Editor, create a table named `review_analyzer` with the columns listed above
+4. In `backend/.env`, add:
 SUPABASE_URL=your_project_url
-SUPABASE_KEY=your_secret_key
-```
+SUPABASE_KEY=your_anon_key
+GROQ_API_KEY=your_groq_key
+5. Install backend dependencies and run the server:
+cd backend
+pip install -r requirements.txt
+uvicorn main:app --reload
 ## 👩‍💻 Author
 
 **Ananya Namdev**

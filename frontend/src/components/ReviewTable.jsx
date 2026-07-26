@@ -184,24 +184,26 @@ function ReviewRow({ review, index, onReRun, onUpdate, onDelete }) {
             </button>
 
             {review.status === 'success' && (
-              <>
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="p-1.5 rounded-md border border-eco-border text-eco-muted hover:text-eco-primary hover:bg-eco-bg hover:border-eco-primary/50 transition-all active:scale-95"
-                  title="Edit response"
-                >
-                  <Pencil className="w-3.5 h-3.5" />
-                </button>
+  <>
+    <button
+      onClick={() => setIsEditing(true)}
+      disabled={review.status === 'loading'}
+      className="p-1.5 rounded-md border border-eco-border text-eco-muted hover:text-eco-primary hover:bg-eco-bg hover:border-eco-primary/50 transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+      title="Edit response"
+    >
+      <Pencil className="w-3.5 h-3.5" />
+    </button>
 
-                <button
-                  onClick={handleDeleteClick}
-                  className="p-1.5 rounded-md border border-eco-border text-eco-muted hover:text-red-600 hover:bg-red-50 hover:border-red-300 transition-all active:scale-95"
-                  title="Delete review"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </>
-            )}
+    <button
+      onClick={handleDeleteClick}
+      disabled={review.status === 'loading'}
+      className="p-1.5 rounded-md border border-eco-border text-eco-muted hover:text-red-600 hover:bg-red-50 hover:border-red-300 transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+      title="Delete review"
+    >
+      <Trash2 className="w-3.5 h-3.5" />
+    </button>
+  </>
+)}
           </div>
         </td>
       </tr>

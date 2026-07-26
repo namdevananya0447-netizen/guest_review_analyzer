@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Copy, Check, RefreshCw, AlertCircle, Loader2, Pencil, Trash2, X } from 'lucide-react';
+import ConfirmDialog from './ConfirmDialog';
+import EmptyState from './EmptyState';
 
 /**
  * Individual Table Row Component to manage copy feedback and loading state.
@@ -8,16 +10,20 @@ function ReviewRow({ review, index, onReRun, onUpdate, onDelete }) {
   const [copied, setCopied] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(review.response || '');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleSaveEdit = () => {
     onUpdate(index, editText);
     setIsEditing(false);
   };
 
-  const handleDelete = () => {
-    if (window.confirm('Delete this review?')) {
-      onDelete(index);
-    }
+  const handleDeleteClick = () => {
+    setShowDeleteConfirm(true);
+  };
+
+  const handleConfirmDelete = () => {
+    onDelete(index);
+    setShowDeleteConfirm(false);
   };
 
   const handleCopy = async (text) => {
@@ -45,159 +51,169 @@ function ReviewRow({ review, index, onReRun, onUpdate, onDelete }) {
   }
 
   return (
-    <tr className={`${rowBgClass} transition-colors border-b border-eco-border/40 text-eco-dark text-sm`}>
-      {/* Index */}
-      <td className="px-4 py-4.5 text-center font-medium text-eco-muted w-12">
-        {index + 1}
-      </td>
+    <>
+      <tr className={`${rowBgClass} transition-colors border-b border-eco-border/40 text-eco-dark text-sm`}>
+        {/* Index */}
+        <td className="px-4 py-4.5 text-center font-medium text-eco-muted w-12">
+          {index + 1}
+        </td>
 
-      {/* Review Text with Custom Tooltip */}
-      <td className="px-4 py-4.5 max-w-xs md:max-w-md relative group">
-        <div className="truncate cursor-pointer font-medium text-eco-dark">
-          {truncatedText}
-        </div>
-        {review.text.length > 90 && (
-          <div className="invisible group-hover:visible absolute z-20 left-4 bottom-full mb-2 w-72 md:w-96 p-3 bg-eco-dark text-[#F0F7F0] text-xs rounded-lg shadow-xl pointer-events-none transition-all duration-200 opacity-0 group-hover:opacity-100">
-            <p className="leading-relaxed">{review.text}</p>
-            <div className="absolute top-full left-6 -mt-1 border-4 border-transparent border-t-eco-dark"></div>
+        {/* Review Text with Custom Tooltip */}
+        <td className="px-4 py-4.5 max-w-xs md:max-w-md relative group">
+          <div className="truncate cursor-pointer font-medium text-eco-dark">
+            {truncatedText}
           </div>
-        )}
-      </td>
-
-      {/* Sentiment */}
-      <td className="px-4 py-4.5 text-center min-w-[110px]">
-        {review.status === 'loading' ? (
-          <div className="flex items-center justify-center">
-            <Loader2 className="w-4 h-4 animate-spin text-eco-primary" />
-          </div>
-        ) : review.status === 'error' ? (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">
-            <AlertCircle className="w-3.5 h-3.5" />
-            Error
-          </span>
-        ) : review.sentiment ? (
-          <span className={`inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider
-            ${review.sentiment === 'positive' ? 'bg-badge-pos-bg text-badge-pos-text' : ''}
-            ${review.sentiment === 'neutral' ? 'bg-badge-neu-bg text-badge-neu-text' : ''}
-            ${review.sentiment === 'negative' ? 'bg-badge-neg-bg text-badge-neg-text' : ''}
-          `}>
-            {review.sentiment}
-          </span>
-        ) : (
-          <span className="text-eco-muted/50">—</span>
-        )}
-      </td>
-
-      {/* Theme */}
-      <td className="px-4 py-4.5 text-center min-w-[110px]">
-        {review.status === 'loading' ? (
-          <span className="inline-block w-8 h-4 bg-eco-primary/10 rounded-sm animate-pulse"></span>
-        ) : review.status === 'error' ? (
-          <span className="text-red-400">—</span>
-        ) : review.theme ? (
-          <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-md text-xs font-semibold uppercase tracking-wider border border-eco-border text-eco-muted bg-white">
-            {review.theme}
-          </span>
-        ) : (
-          <span className="text-eco-muted/50">—</span>
-        )}
-      </td>
-
-      {/* Suggested Response / Error Message */}
-      <td className="px-4 py-4.5 font-sans">
-        {review.status === 'loading' ? (
-          <div className="space-y-1.5">
-            <div className="h-3 bg-eco-primary/10 rounded-sm w-3/4 animate-pulse"></div>
-            <div className="h-3 bg-eco-primary/10 rounded-sm w-1/2 animate-pulse"></div>
-          </div>
-        ) : review.status === 'error' ? (
-          <div className="text-red-600 font-medium flex items-center gap-1.5">
-            <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
-            <span>Could not analyse this review — please retry.</span>
-          </div>
-        ) : review.response ? (
-          isEditing ? (
-            <div className="flex items-start gap-2">
-              <textarea
-                value={editText}
-                onChange={(e) => setEditText(e.target.value)}
-                className="flex-1 text-sm p-2 border border-eco-primary/40 rounded-md focus:outline-none focus:ring-2 focus:ring-eco-primary/20"
-                rows={2}
-              />
-              <button
-                onClick={handleSaveEdit}
-                className="p-1 rounded-md text-eco-primary hover:bg-eco-bg"
-                title="Save"
-              >
-                <Check className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setIsEditing(false)}
-                className="p-1 rounded-md text-eco-muted hover:bg-eco-bg"
-                title="Cancel"
-              >
-                <X className="w-4 h-4" />
-              </button>
+          {review.text.length > 90 && (
+            <div className="invisible group-hover:visible absolute z-20 left-4 bottom-full mb-2 w-72 md:w-96 p-3 bg-eco-dark text-[#F0F7F0] text-xs rounded-lg shadow-xl pointer-events-none transition-all duration-200 opacity-0 group-hover:opacity-100">
+              <p className="leading-relaxed">{review.text}</p>
+              <div className="absolute top-full left-6 -mt-1 border-4 border-transparent border-t-eco-dark"></div>
             </div>
-          ) : (
-            <div className="flex items-start justify-between gap-3 group/response">
-              <p className="italic text-eco-muted leading-relaxed pr-2">
-                "{review.response}"
-              </p>
-              <button
-                onClick={() => handleCopy(review.response)}
-                className="p-1 rounded-md text-eco-muted hover:text-eco-primary hover:bg-eco-bg transition-colors shrink-0"
-                title="Copy to clipboard"
-              >
-                {copied ? (
-                  <Check className="w-4 h-4 text-[#4CAF7D]" />
-                ) : (
-                  <Copy className="w-4 h-4" />
-                )}
-              </button>
-            </div>
-          )
-        ) : (
-          <span className="text-eco-muted/50">—</span>
-        )}
-      </td>
-
-      {/* Actions */}
-      <td className="px-4 py-4.5 text-center w-20">
-        <div className="flex items-center justify-center gap-1">
-          <button
-            onClick={() => onReRun(index)}
-            disabled={review.status === 'loading'}
-            className="p-1.5 rounded-md border border-eco-border text-eco-muted hover:text-eco-primary hover:bg-eco-bg hover:border-eco-primary/50 transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
-            title={review.status === 'error' ? 'Retry analysis' : 'Re-run analysis'}
-          >
-            <RefreshCw
-              className={`w-3.5 h-3.5 ${review.status === 'loading' ? 'animate-spin' : ''}`}
-            />
-          </button>
-
-          {review.status === 'success' && (
-            <>
-              <button
-                onClick={() => setIsEditing(true)}
-                className="p-1.5 rounded-md border border-eco-border text-eco-muted hover:text-eco-primary hover:bg-eco-bg hover:border-eco-primary/50 transition-all active:scale-95"
-                title="Edit response"
-              >
-                <Pencil className="w-3.5 h-3.5" />
-              </button>
-
-              <button
-                onClick={handleDelete}
-                className="p-1.5 rounded-md border border-eco-border text-eco-muted hover:text-red-600 hover:bg-red-50 hover:border-red-300 transition-all active:scale-95"
-                title="Delete review"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
-            </>
           )}
-        </div>
-      </td>
-    </tr>
+        </td>
+
+        {/* Sentiment */}
+        <td className="px-4 py-4.5 text-center min-w-[110px]">
+          {review.status === 'loading' ? (
+            <div className="flex items-center justify-center">
+              <Loader2 className="w-4 h-4 animate-spin text-eco-primary" />
+            </div>
+          ) : review.status === 'error' ? (
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+              <AlertCircle className="w-3.5 h-3.5" />
+              Error
+            </span>
+          ) : review.sentiment ? (
+            <span className={`inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider
+              ${review.sentiment === 'positive' ? 'bg-badge-pos-bg text-badge-pos-text' : ''}
+              ${review.sentiment === 'neutral' ? 'bg-badge-neu-bg text-badge-neu-text' : ''}
+              ${review.sentiment === 'negative' ? 'bg-badge-neg-bg text-badge-neg-text' : ''}
+            `}>
+              {review.sentiment}
+            </span>
+          ) : (
+            <span className="text-eco-muted/50">—</span>
+          )}
+        </td>
+
+        {/* Theme */}
+        <td className="px-4 py-4.5 text-center min-w-[110px]">
+          {review.status === 'loading' ? (
+            <span className="inline-block w-8 h-4 bg-eco-primary/10 rounded-sm animate-pulse"></span>
+          ) : review.status === 'error' ? (
+            <span className="text-red-400">—</span>
+          ) : review.theme ? (
+            <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-md text-xs font-semibold uppercase tracking-wider border border-eco-border text-eco-muted bg-white">
+              {review.theme}
+            </span>
+          ) : (
+            <span className="text-eco-muted/50">—</span>
+          )}
+        </td>
+
+        {/* Suggested Response / Error Message */}
+        <td className="px-4 py-4.5 font-sans">
+          {review.status === 'loading' ? (
+            <div className="space-y-1.5">
+              <div className="h-3 bg-eco-primary/10 rounded-sm w-3/4 animate-pulse"></div>
+              <div className="h-3 bg-eco-primary/10 rounded-sm w-1/2 animate-pulse"></div>
+            </div>
+          ) : review.status === 'error' ? (
+            <div className="text-red-600 font-medium flex items-center gap-1.5">
+              <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
+              <span>Could not analyse this review — please retry.</span>
+            </div>
+          ) : review.response ? (
+            isEditing ? (
+              <div className="flex items-start gap-2">
+                <textarea
+                  value={editText}
+                  onChange={(e) => setEditText(e.target.value)}
+                  className="flex-1 text-sm p-2 border border-eco-primary/40 rounded-md focus:outline-none focus:ring-2 focus:ring-eco-primary/20"
+                  rows={2}
+                />
+                <button
+                  onClick={handleSaveEdit}
+                  className="p-1 rounded-md text-eco-primary hover:bg-eco-bg"
+                  title="Save"
+                >
+                  <Check className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setIsEditing(false)}
+                  className="p-1 rounded-md text-eco-muted hover:bg-eco-bg"
+                  title="Cancel"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-start justify-between gap-3 group/response">
+                <p className="italic text-eco-muted leading-relaxed pr-2">
+                  "{review.response}"
+                </p>
+                <button
+                  onClick={() => handleCopy(review.response)}
+                  className="p-1 rounded-md text-eco-muted hover:text-eco-primary hover:bg-eco-bg transition-colors shrink-0"
+                  title="Copy to clipboard"
+                >
+                  {copied ? (
+                    <Check className="w-4 h-4 text-[#4CAF7D]" />
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+            )
+          ) : (
+            <span className="text-eco-muted/50">—</span>
+          )}
+        </td>
+
+        {/* Actions */}
+        <td className="px-4 py-4.5 text-center w-20">
+          <div className="flex items-center justify-center gap-1">
+            <button
+              onClick={() => onReRun(index)}
+              disabled={review.status === 'loading'}
+              className="p-1.5 rounded-md border border-eco-border text-eco-muted hover:text-eco-primary hover:bg-eco-bg hover:border-eco-primary/50 transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+              title={review.status === 'error' ? 'Retry analysis' : 'Re-run analysis'}
+            >
+              <RefreshCw
+                className={`w-3.5 h-3.5 ${review.status === 'loading' ? 'animate-spin' : ''}`}
+              />
+            </button>
+
+            {review.status === 'success' && (
+              <>
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="p-1.5 rounded-md border border-eco-border text-eco-muted hover:text-eco-primary hover:bg-eco-bg hover:border-eco-primary/50 transition-all active:scale-95"
+                  title="Edit response"
+                >
+                  <Pencil className="w-3.5 h-3.5" />
+                </button>
+
+                <button
+                  onClick={handleDeleteClick}
+                  className="p-1.5 rounded-md border border-eco-border text-eco-muted hover:text-red-600 hover:bg-red-50 hover:border-red-300 transition-all active:scale-95"
+                  title="Delete review"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </>
+            )}
+          </div>
+        </td>
+      </tr>
+
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        title="Delete this review?"
+        message="This review will be permanently removed. This cannot be undone."
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
+    </>
   );
 }
 
@@ -205,6 +221,17 @@ function ReviewRow({ review, index, onReRun, onUpdate, onDelete }) {
  * ReviewTable Component
  */
 export default function ReviewTable({ reviews, onReRun, onUpdate, onDelete }) {
+  if (!reviews || reviews.length === 0) {
+    return (
+      <div className="w-full border border-eco-border rounded-xl bg-white shadow-xs">
+        <EmptyState
+          message="No reviews yet"
+          subMessage="Add your first guest review to see AI sentiment analysis."
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full overflow-hidden border border-eco-border rounded-xl bg-white shadow-xs">
       <div className="overflow-x-auto">

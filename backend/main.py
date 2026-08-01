@@ -26,7 +26,7 @@ load_dotenv()
 client=AsyncGroq(api_key=os.environ.get("GROQ_API_KEY"))
 app=FastAPI()
 app.add_middleware(
-    CORSMiddleware,allow_origins=["http://localhost:5173"],
+    CORSMiddleware,allow_origins=["https://guest-review-analyzer.vercel.app"],
     allow_credentials=True,allow_methods=["*"],allow_headers=["*"]
 )
 

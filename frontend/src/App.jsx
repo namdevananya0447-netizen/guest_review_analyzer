@@ -10,6 +10,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { useAuth } from './context/AuthContext';
 import Profile from './pages/Profile';
 import OAuthCallback from './pages/OAuthCallback';
+import { API_URL } from './config';
 
 const DEFAULT_PLACEHOLDER = `The food was absolutely delicious! Fresh organic ingredients from their garden. The host was very warm.
 
@@ -52,7 +53,7 @@ function Dashboard() {
     setReviews(prev => prev.map((r, i) => i === index ? { ...r, status: 'loading', error: null } : r));
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/classify", {
+      const response = await fetch(`${API_URL}/classify`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -155,7 +156,7 @@ function Dashboard() {
     if (!reviewItem?.dbId) return;
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/update/${reviewItem.dbId}`, {
+      const response = await fetch(`${API_URL}/update/${reviewItem.dbId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -190,7 +191,7 @@ function Dashboard() {
     if (!reviewItem?.dbId) return;
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/delete/${reviewItem.dbId}`, {
+      const response = await fetch(`${API_URL}/delete/${reviewItem.dbId}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`,

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { API_URL } from '../config';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -16,7 +17,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/auth/login', {
+      const response = await fetch('${API_URL}/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -88,7 +89,7 @@ export default function Login() {
         </div>
 
         <a
-          href="http://127.0.0.1:8000/api/auth/google/login"
+          href={`${API_URL}/api/auth/google/login`}
           className="w-full h-11 flex items-center justify-center gap-2 border border-eco-border rounded-lg font-semibold text-sm text-eco-dark hover:bg-eco-bg transition-all"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24">

@@ -159,3 +159,19 @@ This project can help hospitality businesses:
 ## License
 
 This project was developed for educational and internship purposes. It may be modified and extended for personal, academic, or commercial use.
+## Deployment
+
+- **Live Frontend**: https://guest-review-analyzer.vercel.app
+- **Live Backend**: https://guest-review-analyzer.onrender.com
+
+### Tech Stack
+- Frontend: React + Vite + Tailwind CSS
+- Backend: FastAPI + Python
+- Database: Supabase (PostgreSQL)
+- AI: Groq API (llama-3.3-70b-versatile)
+- Auth: JWT (python-jose) + bcrypt, Google OAuth 2.0
+- Deployment: Vercel (frontend), Render (backend)
+
+### Known Limitations on Free Tier
+- Render's free tier spins down after 15 minutes of inactivity. The first request after idle can take 30–60 seconds to wake the server — this is expected behavior, not a bug.
+- Supabase free tier has standard connection/storage limits suitable for demo use.
